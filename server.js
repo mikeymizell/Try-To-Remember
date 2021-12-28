@@ -1,8 +1,7 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
-
-const { db } = require('./db/db');
+const { notes } = require('./data/db.json');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,35 +15,40 @@ app.use(express.urlencoded({ extended: true }));
 //parse incoming JSON data
 app.use(express.json());
 
-function addNote(body, dbArray) {
+function addNote(body, notesArray) {
     const entry = body;
-    dbArray.push(entry);
+
+    notesArray.push(entry);
+
+    fs.writeFileSync(
+        path.join(__dirname, './data/db.json'),
+        JSON.stringify({ notes: notesArray }, null, 2)
+    );
 
     return entry;
 }
 
-app.get('/api/notes', (req, res) => {
-    let note = db;
+function updateNote(body, match ,notesArray) { 
+    return entry;
+}
 
-    console.log(note);
-    res.json(note);
+app.get('/api/notes', (req, res) => {
+   // console.log(notes);
+    res.json(notes);
 })
 
-// app.post('/api/notes', (req, res) => {
-//     console.log(req.body);
-//     console.log(db);
-//     const newEntry = addNote(req.body, db);
-
-//     res.json(newEntry);
-// })
+app.post('/api/notes', (req, res) => {
+    const newEntry = addNote(req.body, notes);
+    res.json(newEntry);
+})
 
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'));
 })
 
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, './public/index.html'));
-// })
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
+})
 
 app.listen(PORT, () => {
     console.log(`API server open on port ${PORT}`);
