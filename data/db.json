@@ -2,6 +2,10 @@
   "notes": [
     {
       "title": "Test Title",
+      "text": "New text"
+    },
+    {
+      "title": "New Test Title",
       "text": "Test text"
     }
   ]

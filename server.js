@@ -28,8 +28,29 @@ function addNote(body, notesArray) {
     return entry;
 }
 
-function updateNote(body, match ,notesArray) { 
+function updateNote(body, matchIndex, notesArray) { 
+    const entry = body;
+
+    notesArray[matchIndex].text = body;
+
+    fs.writeFileSync(
+        path.join(__dirname, './data/db.json'),
+        JSON.stringify({ notes: notesArray }, null, 2)
+    );
+
     return entry;
+}
+
+function validateNote(note) {
+    if (!note.title || typeof note.title !== 'string') {
+        return false;
+    };
+
+    if (!note.text || typeof note.text !== 'string') {
+        return false;
+    };
+
+    return true;
 }
 
 app.get('/api/notes', (req, res) => {
@@ -38,8 +59,29 @@ app.get('/api/notes', (req, res) => {
 })
 
 app.post('/api/notes', (req, res) => {
-    const newEntry = addNote(req.body, notes);
-    res.json(newEntry);
+    let match = false;
+
+    for (i = 0; match !== true || i < notes.length; i++) {
+        if (notes[i].title === req.body.title) {
+            match = true;
+
+            const updatedEntry = updateNote(req.body.text, i, notes);
+            res.json(updatedEntry);
+        }
+    };
+
+    if (!match) {
+        if (!validateNote(req.body)) {
+            res.status(400).send('Please fill out text areas.');
+        }
+        else {
+            const newEntry = addNote(req.body, notes);
+            res.json(newEntry);
+        }  
+    }
+    else {
+        res.end();
+    }
 })
 
 app.get('/notes', (req, res) => {
