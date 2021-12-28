@@ -1,8 +1,8 @@
-const { db } = require('./db/db.json');
-
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+
+const { db } = require('./db/db');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,6 +23,21 @@ function addNote(body, dbArray) {
     return entry;
 }
 
+app.get('/api/notes', (req, res) => {
+    let note = db;
+
+    console.log(note);
+    res.json(note);
+})
+
+// app.post('/api/notes', (req, res) => {
+//     console.log(req.body);
+//     console.log(db);
+//     const newEntry = addNote(req.body, db);
+
+//     res.json(newEntry);
+// })
+
 app.get('/notes', (req, res) => {
     res.sendFile(path.join(__dirname, './public/notes.html'));
 })
@@ -30,18 +45,6 @@ app.get('/notes', (req, res) => {
 // app.get('*', (req, res) => {
 //     res.sendFile(path.join(__dirname, './public/index.html'));
 // })
-
-app.get('/api/notes', (req, res) => {
-    res.json(req);
-})
-
-app.post('/api/notes', (req, res) => {
-    console.log(req.body);
-    console.log(db);
-    const newEntry = addNote(req.body, db);
-
-    res.json(newEntry);
-})
 
 app.listen(PORT, () => {
     console.log(`API server open on port ${PORT}`);
