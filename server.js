@@ -54,28 +54,31 @@ function validateNote(note) {
 }
 
 app.get('/api/notes', (req, res) => {
-   // console.log(notes);
     res.json(notes);
 })
 
 app.post('/api/notes', (req, res) => {
     let match = false;
+    let entry = req.body
 
     for (i = 0; match !== true || i < notes.length; i++) {
-        if (notes[i].title === req.body.title) {
+        let title = entry.title;
+        if (notes[i].title === entry.title) {
             match = true;
 
-            const updatedEntry = updateNote(req.body.text, i, notes);
+            entry = req.body.text;
+
+            const updatedEntry = updateNote(entry, i, notes);
             res.json(updatedEntry);
         }
     };
 
     if (!match) {
-        if (!validateNote(req.body)) {
+        if (!validateNote(entry)) {
             res.status(400).send('Please fill out text areas.');
         }
         else {
-            const newEntry = addNote(req.body, notes);
+            const newEntry = addNote(entry, notes);
             res.json(newEntry);
         }  
     }

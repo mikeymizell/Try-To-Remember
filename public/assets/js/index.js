@@ -1,5 +1,3 @@
-const { response } = require('express');
-
 let noteTitle;
 let noteText;
 let saveNoteBtn;
@@ -43,16 +41,16 @@ const saveNote = (note) =>
     },
     body: JSON.stringify(note),
   })
-  .then(response => {
-    if (response.ok) {
-      return response.json();
-    }
-    alert('Error: ' + response.statusText);
-  })
-  .then(postResponse => {
-    console.log(postResponse);
-    alert('Note Added/Updated');
-  }) 
+  // .then(response => {
+  //   if (response.ok) {
+  //     return response.json();
+  //   }
+  //   alert('Error: ' + response.statusText);
+  // })
+  // .then(postResponse => {
+  //   console.log(postResponse);
+  //   alert('Note Added/Updated');
+  // }) 
 
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
