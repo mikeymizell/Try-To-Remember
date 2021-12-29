@@ -60,10 +60,10 @@ app.get('/api/notes', (req, res) => {
 app.post('/api/notes', (req, res) => {
     let match = false;
     let entry = req.body
+    let i = 0;
 
-    for (i = 0; match !== true || i < notes.length; i++) {
-        let title = entry.title;
-        if (notes[i].title === entry.title) {
+    notes.forEach(noteData => {
+        if (noteData.title === entry.title) {
             match = true;
 
             entry = req.body.text;
@@ -71,7 +71,8 @@ app.post('/api/notes', (req, res) => {
             const updatedEntry = updateNote(entry, i, notes);
             res.json(updatedEntry);
         }
-    };
+        i++;
+    })
 
     if (!match) {
         if (!validateNote(entry)) {

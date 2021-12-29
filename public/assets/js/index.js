@@ -41,16 +41,16 @@ const saveNote = (note) =>
     },
     body: JSON.stringify(note),
   })
-  // .then(response => {
-  //   if (response.ok) {
-  //     return response.json();
-  //   }
-  //   alert('Error: ' + response.statusText);
-  // })
-  // .then(postResponse => {
-  //   console.log(postResponse);
-  //   alert('Note Added/Updated');
-  // }) 
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    alert('Error: ' + response.statusText);
+  })
+  .then(postResponse => {
+    console.log(postResponse);
+    alert('Note Added/Updated');
+  }) 
 
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
@@ -112,7 +112,7 @@ const handleNoteView = (e) => {
   renderActiveNote();
 };
 
-// Sets the activeNote to and empty object and allows the user to enter a new note
+// Sets the activeNote to an empty object and allows the user to enter a new note
 const handleNewNoteView = (e) => {
   activeNote = {};
   renderActiveNote();
