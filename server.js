@@ -1,7 +1,6 @@
 const express = require('express');
-const path = require('path');
-const fs = require('fs');
-const { notes } = require('./data/db.json');
+const apiRoutes = require('./routes/apiRoutes');
+const htmlRoutes = require('./routes/htmlRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -15,86 +14,8 @@ app.use(express.urlencoded({ extended: true }));
 //parse incoming JSON data
 app.use(express.json());
 
-function addNote(body, notesArray) {
-    const entry = body;
-
-    notesArray.push(entry);
-
-    fs.writeFileSync(
-        path.join(__dirname, './data/db.json'),
-        JSON.stringify({ notes: notesArray }, null, 2)
-    );
-
-    return entry;
-}
-
-function updateNote(body, matchIndex, notesArray) { 
-    const entry = body;
-
-    notesArray[matchIndex].text = body;
-
-    fs.writeFileSync(
-        path.join(__dirname, './data/db.json'),
-        JSON.stringify({ notes: notesArray }, null, 2)
-    );
-
-    return entry;
-}
-
-function validateNote(note) {
-    if (!note.title || typeof note.title !== 'string') {
-        return false;
-    };
-
-    if (!note.text || typeof note.text !== 'string') {
-        return false;
-    };
-
-    return true;
-}
-
-app.get('/api/notes', (req, res) => {
-    res.json(notes);
-})
-
-app.post('/api/notes', (req, res) => {
-    let match = false;
-    let entry = req.body
-    let i = 0;
-
-    notes.forEach(noteData => {
-        if (noteData.title === entry.title) {
-            match = true;
-
-            entry = req.body.text;
-
-            const updatedEntry = updateNote(entry, i, notes);
-            res.json(updatedEntry);
-        }
-        i++;
-    })
-
-    if (!match) {
-        if (!validateNote(entry)) {
-            res.status(400).send('Please fill out text areas.');
-        }
-        else {
-            const newEntry = addNote(entry, notes);
-            res.json(newEntry);
-        }  
-    }
-    else {
-        res.end();
-    }
-})
-
-app.get('/notes', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/notes.html'));
-})
-
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, './public/index.html'));
-})
+app.use('/api', apiRoutes);
+//app.use('/', htmlRoutes);
 
 app.listen(PORT, () => {
     console.log(`API server open on port ${PORT}`);
